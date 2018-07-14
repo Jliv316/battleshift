@@ -10,10 +10,11 @@ describe 'Registered user', type: :request do
     create_spaces(@board1)
     create_spaces(@board2)
   end
-    context 'user places ship' do
-      it 'serializes response' do
+  context 'user places ship' do
+    it 'serializes response' do
       payload = { ship_size: 3, start_space: "A1", end_space: "A3" }
       endpoint = "/api/v1/games/#{@game.id}/ships"
+      board_size = 4
 
       post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
 

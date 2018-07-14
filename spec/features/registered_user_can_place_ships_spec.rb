@@ -40,7 +40,10 @@ describe 'Registered user', type: :request do
     end
 
     it 'the user can send another request to the ship placing endpoint and place the last ship' do
-      payload = { ship_size: 3, start_space: "A1", end_space: "A3" }
+      ship = Ship.create!(id: 1115)
+      @board1.spaces.first.update(ship_id: ship.id)
+      @board1.spaces.last.update(ship_id: ship.id)
+      payload = { ship_size: 3, start_space: "A2", end_space: "A4" }
       endpoint = "/api/v1/games/#{@game.id}/ships"
 
       post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user1.api_key}
@@ -48,12 +51,12 @@ describe 'Registered user', type: :request do
       data = JSON.parse(response.body)
 
       expect(data["message"]).to eq("Successfully placed ship with a size of 3. You have 0 ship(s) to place.")
-      expect(@board1.spaces.find_by(name: "A1").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A3").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A1").ship_id).to_not eq(6)
+      expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.first.id)
+      expect(@board1.spaces.find_by(name: "A3").ship_id).to eq(Ship.first.id)
+      expect(@board1.spaces.find_by(name: "A4").ship_id).to eq(Ship.first.id)
       expect(@board1.spaces.find_by(name: "A2").ship_id).to_not eq(6)
       expect(@board1.spaces.find_by(name: "A3").ship_id).to_not eq(6)
+      expect(@board1.spaces.find_by(name: "A4").ship_id).to_not eq(6)
     end
 
     it 'opponent can now place ships' do 
@@ -63,7 +66,6 @@ describe 'Registered user', type: :request do
       post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
 
       data = JSON.parse(response.body, symbolize_names: true)
-      binding.pry
       expect(data["message"]).to eq("Successfully placed ship with a size of 3. You have 1 ship(s) to place.")
       expect(@board1.spaces.find_by(name: "A1").ship_id).to eq(Ship.last.id)
       expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.last.id)

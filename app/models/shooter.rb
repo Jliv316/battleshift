@@ -20,9 +20,9 @@ class Shooter
     #   @space ||= board.spaces.find_by(name: target)
     # end
 
-    def valid_shot?
-      BoardService.space_names.include?(target)
-    end
+  def valid_shot?
+    BoardService.space_names.include?(target)
+  end
 end
 
 class InvalidAttack < StandardError
