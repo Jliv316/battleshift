@@ -18,6 +18,8 @@ module Api
         else
           game = Game.create(player_1_id: p1, player_2_id: p2, player_1_api_key: p1.api_key, player_2_api_key: p2.api_key)
           invite_player_2(p1, p2, game)
+          BoardService.create_board(p1, game, 4)
+          BoardService.create_board(p2, game, 4)
         end
       end
 

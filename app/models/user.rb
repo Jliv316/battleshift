@@ -20,4 +20,8 @@ class User < ApplicationRecord
   def already_playing?(user)
     games.where('player_2_api_key = ?', user.api_key)
   end
+
+  def find_board(game)
+    boards.find_by(game_id: game.id)
+  end
 end

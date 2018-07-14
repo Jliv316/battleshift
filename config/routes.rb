@@ -18,8 +18,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       post '/games', to: 'games#create'
       resources :games, only: [:show] do
-        post ':id/ships', to: 'boards#update'
-        post ':id/shots', to: 'games/shots#create'
+        post '/ships', to: 'boards#update'
+        post '/shots', to: 'games/shots#create'
         # post "/shots", to: "games/shots#create"
       end
     end
@@ -27,7 +27,7 @@ Rails.application.routes.draw do
 
   # Game play resources
   post '/api/v1/games', to: 'games#create'
-  
+    
   # Notification resources
   post '/welcome', to: 'notification#create'
 end
