@@ -2,7 +2,7 @@ class ShipPlacerService
   attr_reader :message
   def initialize(board, length, start_space, end_space)
     @board       = board
-    @ship        = Ship.create!(length: length, damage: nil)
+    @ship        = Ship.create!(length: length)
     @start_space = start_space
     @end_space   = end_space
     ship_place

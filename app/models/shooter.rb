@@ -1,5 +1,5 @@
 class Shooter
-  def initialize(board:, target:)
+  def initialize(board, target)
     @board     = board
     @target    = target
     @message   = ""
@@ -7,25 +7,21 @@ class Shooter
 
   def fire!
     if valid_shot?
-      space.attack!
+      SpaceService.new(@board, @target).attack!
     else
       raise InvalidAttack.new("Invalid coordinates.")
     end
   end
 
-  def self.fire!(board:, target:)
-    new(board: board, target: target).fire!
-  end
-
   private
-    attr_reader :board, :target
+    attr_reader :target
 
-    def space
-      @space ||= board.locate_space(target)
-    end
+    # def space
+    #   @space ||= board.spaces.find_by(name: target)
+    # end
 
     def valid_shot?
-      board.space_names.include?(target)
+      BoardService.space_names.include?(target)
     end
 end
 
