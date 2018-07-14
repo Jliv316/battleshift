@@ -3,13 +3,13 @@ class RowSerializer < ActiveModel::Serializer
   attributes :name, :data
 
   def name
-    row_letter = object.first.keys.first.first.downcase
+    row_letter = object.first.name[0].downcase
     ["row", row_letter].join("_")
   end
 
   def data
-    object.map do |space_data|
-      SpaceSerializer.new(space_data.values.first).attributes
+    object.map do |space|
+      SpaceSerializer.new(space).attributes
     end
   end
 end

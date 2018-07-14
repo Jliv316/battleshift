@@ -5,8 +5,8 @@ class CreateGames < ActiveRecord::Migration[5.1]
       t.text :player_2_board
       t.integer :winner
       t.integer :player_1_turns
-      t.integer :player_2_turns
-      t.integer :current_turn
+      t.integer  :player_2_turns
+      t.string :current_turn, default: ""
 
       t.timestamps
     end

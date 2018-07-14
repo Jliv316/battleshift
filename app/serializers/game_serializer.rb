@@ -3,14 +3,15 @@ class GameSerializer < ActiveModel::Serializer
              :player_1_board, :player_2_board
 
   def player_1_board
-    BoardSerializer.new(object.player_1_board).attributes
+    BoardSerializer.new(object.boards.first).attributes
   end
 
   def player_2_board
-    BoardSerializer.new(object.player_2_board).attributes
+    BoardSerializer.new(object.boards.last).attributes
   end
 
   def message
+    require 'pry'; binding.pry
     @instance_options[:message]
   end
 end

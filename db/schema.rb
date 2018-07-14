@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20180712214942) do
     t.integer "winner"
     t.integer "player_1_turns"
     t.integer "player_2_turns"
-    t.integer "current_turn"
+    t.string "current_turn", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "player_1_id"
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20180712214942) do
   create_table "spaces", force: :cascade do |t|
     t.string "name"
     t.bigint "board_id"
-    t.string "result"
+    t.string "result", default: ""
     t.bigint "ship_id"
     t.index ["board_id"], name: "index_spaces_on_board_id"
     t.index ["ship_id"], name: "index_spaces_on_ship_id"

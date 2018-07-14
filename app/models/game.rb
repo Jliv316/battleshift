@@ -1,7 +1,6 @@
 class Game < ApplicationRecord
   attr_accessor :messages
-
-  enum current_turn: ["challenger", "player"]
+  after_create :init
   # serialize :player_1_board
   # serialize :player_2_board
 
@@ -12,4 +11,8 @@ class Game < ApplicationRecord
   belongs_to :player_2_id, class_name: 'User', foreign_key: 'player_2_id'
   has_many :boards
   has_many :spaces, through: :boards
+
+  def init
+    self.current_turn = ""
+  end
 end

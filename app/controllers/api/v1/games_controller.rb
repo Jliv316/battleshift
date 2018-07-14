@@ -7,10 +7,10 @@ module Api
       end
 
       def create
-        p1 = User.find_by(api_key: game_params[:api_key])
-        p2 = User.find_by(username: game_params[:player_2_username])
+        p1 = User.find_by(api_key: request.headers["HTTP_X_API_KEY"])
+        p2 = User.find_by(username: game_params[:opponent_email])
         if p2.nil?
-          player_2_not_registered(game_params[:player_2_username], p1)
+          player_2_not_registered(game_params[:opponent_email], p1)
         elsif !p2.activated
           player_not_activated(p2)
         elsif !p1.activated
@@ -23,15 +23,31 @@ module Api
         end
       end
 
+      def update
+        game = Game.find(params[:game_id])
+        player = User.find_by(api_key: request.headers["HTTP_X_API_KEY"])
+        if playing_game?(game, request.headers["HTTP_X_API_KEY"])
+          result = ShipPlacerService.new(player.find_board(game), params[:ship_size], params[:start_space], params[:end_space])
+          render json: game, message: result.message
+        else
+          render json: { "message": "You must be a part of this game in order to place your ships."}
+          redirect_to dashboard_path(player)
+        end
+      end
+
       private
 
       def game_params
-        params.require(:game).permit(:api_key, :player_2_username)
+        params.permit(:api_key, :opponent_email)
+      end
+
+      def playing_game?(game, player_api_key)
+        game.player_1_api_key == player_api_key || game.player_2_api_key == player_api_key
       end
 
       def player_not_activated(player)
         BattleshipNotifierMailer.welcome(player, request.base_url).deliver_now
-        if player.username == game_params[:player_2_username]
+        if player.username == game_params[:opponent_email]
           render json: { message: "You're opponent must activate their account before you can play a game. They have been sent an activation email."}, status: 400
         else
           render json: { message: "You must activate your account before you can play a game. Check your email for another activation email."}, status: 400
