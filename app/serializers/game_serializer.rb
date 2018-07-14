@@ -11,7 +11,6 @@ class GameSerializer < ActiveModel::Serializer
   end
 
   def message
-    require 'pry'; binding.pry
     @instance_options[:message]
   end
 end
