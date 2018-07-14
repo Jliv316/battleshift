@@ -63,7 +63,7 @@ describe 'Registered user', type: :request do
       post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
 
       data = JSON.parse(response.body, symbolize_names: true)
-      binding.pry
+
       expect(data["message"]).to eq("Successfully placed ship with a size of 3. You have 1 ship(s) to place.")
       expect(@board1.spaces.find_by(name: "A1").ship_id).to eq(Ship.last.id)
       expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.last.id)
@@ -88,6 +88,20 @@ describe 'Registered user', type: :request do
       expect(@board1.spaces.find_by(name: "A1").ship_id).to_not eq(6)
       expect(@board1.spaces.find_by(name: "A2").ship_id).to_not eq(6)
       expect(@board1.spaces.find_by(name: "A3").ship_id).to_not eq(6)
+    end
+  end
+
+  context 'players have deployed ships' do
+    it 'player 1 takes shot and recieves an error message telling player 1 it is not his/her turn' do
+      payload = {target: "A1"}
+      endpoint = "/api/v1/games/#{@game.id}/shots"
+
+      post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user1.api_key}
+
+      game_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(game_data[:message]).to include("Invalid move. It's your opponent's turn")
+
     end
   end
 end
