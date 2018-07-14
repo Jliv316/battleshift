@@ -31,7 +31,6 @@ module Api
           render json: game, message: result.message
         else
           render json: { "message": "You must be a part of this game in order to place your ships."}
-          redirect_to dashboard_path(player)
         end
       end
 
