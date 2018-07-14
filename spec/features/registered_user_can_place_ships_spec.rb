@@ -28,11 +28,18 @@ describe 'Registered user', type: :request do
       expect(@board1.spaces.find_by(name: "C1").ship_id).to_not eq(2)
     end
 
+    it 'user will recieve an error upon attempting to place a ship on an occupied space' do
+      payload = { ship_size: 2, start_space: "B1", end_space: "C1" }
+      endpoint = "/api/v1/games/#{@game.id}/ships"
+
+      post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user1.api_key}
+
+      data = JSON.parse(response.body)
+
+      expect(data["message"]).to eq("Successfully placed ship with a size of 2. You have 1 ship(s) to place with a size of 3.")
+    end
+
     it 'the user can send another request to the ship placing endpoint and place the last ship' do
-      ship = Ship.create!(length: 2)
-      SpaceService.occupy!(@board1.spaces.find_by(name: "C1"), ship)
-      SpaceService.occupy!(@board1.spaces.find_by(name: "B1"), ship)
-      
       payload = { ship_size: 3, start_space: "A1", end_space: "A3" }
       endpoint = "/api/v1/games/#{@game.id}/ships"
 
@@ -41,6 +48,40 @@ describe 'Registered user', type: :request do
       data = JSON.parse(response.body)
 
       expect(data["message"]).to eq("Successfully placed ship with a size of 3. You have 0 ship(s) to place.")
+      expect(@board1.spaces.find_by(name: "A1").ship_id).to eq(Ship.last.id)
+      expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.last.id)
+      expect(@board1.spaces.find_by(name: "A3").ship_id).to eq(Ship.last.id)
+      expect(@board1.spaces.find_by(name: "A1").ship_id).to_not eq(6)
+      expect(@board1.spaces.find_by(name: "A2").ship_id).to_not eq(6)
+      expect(@board1.spaces.find_by(name: "A3").ship_id).to_not eq(6)
+    end
+
+    it 'opponent can now place ships' do 
+      payload = { ship_size: 3, start_space: "A1", end_space: "A3" }
+      endpoint = "/api/v1/games/#{@game.id}/ships"
+
+      post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
+
+      data = JSON.parse(response.body, symbolize_names: true)
+      binding.pry
+      expect(data["message"]).to eq("Successfully placed ship with a size of 3. You have 1 ship(s) to place.")
+      expect(@board1.spaces.find_by(name: "A1").ship_id).to eq(Ship.last.id)
+      expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.last.id)
+      expect(@board1.spaces.find_by(name: "A3").ship_id).to eq(Ship.last.id)
+      expect(@board1.spaces.find_by(name: "A1").ship_id).to_not eq(6)
+      expect(@board1.spaces.find_by(name: "A2").ship_id).to_not eq(6)
+      expect(@board1.spaces.find_by(name: "A3").ship_id).to_not eq(6)
+    end
+
+    it 'opponent can place remaining ship' do 
+      payload = { ship_size: 2, start_space: "B1", end_space: "B2" }
+      endpoint = "/api/v1/games/#{@game.id}/ships"
+
+      post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
+
+      data = JSON.parse(response.body)
+
+      expect(data["message"]).to eq("Successfully placed ship with a size of 2. You have 0 ship(s) to place.")
       expect(@board1.spaces.find_by(name: "A1").ship_id).to eq(Ship.last.id)
       expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.last.id)
       expect(@board1.spaces.find_by(name: "A3").ship_id).to eq(Ship.last.id)
