@@ -7,7 +7,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 require 'support/factory_bot'
 require 'capybara/rails'
-
+require 'simplecov'
+SimpleCov.start
 SimpleCov.start "rails"
 
 Shoulda::Matchers.configure do |config|
