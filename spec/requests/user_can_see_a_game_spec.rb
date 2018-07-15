@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'GET /api/v1/games/1' do
   context 'with an existing game' do
-    it 'returns a game with boards' do
+    xit 'returns a game with boards' do
       player_1_board = Board.new(4)
       player_2_board = Board.new(4)
       sm_ship = Ship.new(2)

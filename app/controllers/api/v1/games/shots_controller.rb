@@ -9,7 +9,7 @@ module Api
           if shooter.nil?
             render json: { message: "Unauthorized"}, status: 401
           elsif (game.current_turn == "Player 1" && game.player_1_id.id == shooter.id) || (game.current_turn == "Player 2" && game.player_2_id.id == shooter.id) && game.winner.nil? || game.current_turn == ""
-            turn_processor = TurnProcessorService.new(game, params[:shot][:target], shooter)
+            turn_processor = TurnProcessorService.new(game, params[:target], shooter)
             turn_processor.run!
             if turn_processor.message == "Invalid coordinates."
               render json: game, message: turn_processor.message, status: 400 

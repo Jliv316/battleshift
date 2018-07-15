@@ -8,13 +8,11 @@ module Api
 
       def create
         p1 = User.find_by(api_key: request.headers["HTTP_X_API_KEY"])
-        p2 = User.find_by(username: game_params[:player_2_username])
-        if p2.nil?
-          player_2_not_registered(game_params[:player_2_username], p1)
-        elsif !p2.activated
-          player_not_activated(p2)
-        elsif !p1.activated
-          player_not_activated(p1)
+        p2 = User.find_by(username: params[:opponent_email]) 
+        case
+        when p2.nil?                then player_2_not_registered(params[:opponent_email], p1)
+        when !p2.activated          then player_not_activated(p2)
+        when !p1.activated          then player_not_activated(p1)
         else
           game = Game.create(player_1_id: p1, player_2_id: p2, player_1_api_key: p1.api_key, player_2_api_key: p2.api_key)
           invite_player_2(p1, p2, game)
@@ -37,7 +35,7 @@ module Api
       private
 
       def game_params
-        params.require(:game).permit(:player_2_username)
+        permit(:opponent_email)
       end
 
       def playing_game?(game, player_api_key)
@@ -46,7 +44,7 @@ module Api
 
       def player_not_activated(player)
         BattleshipNotifierMailer.welcome(player, request.base_url).deliver_now
-        if player.username == game_params[:player_2_username]
+        if player.username == params[:opponent_email]
           render json: { message: "You're opponent must activate their account before you can play a game. They have been sent an activation email."}, status: 400
         else
           render json: { message: "You must activate your account before you can play a game. Check your email for another activation email."}, status: 400

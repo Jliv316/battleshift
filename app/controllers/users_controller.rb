@@ -61,7 +61,7 @@ class UsersController < ApplicationController
       player_1 = User.find(params[:start])
       if @user.save
         login(@user)
-        response = Faraday.post('/api/v1/games', {params: { api_key: "#{player_1.api_key}", player_2_username: "#{@user.username}"}})
+        response = Faraday.post('/api/v1/games', params: { opponent_email: @user.username }, headers: {"HTTP_X_API_KEY" => player_1.api_key})
         BattleshipNotifierMailer.special_invitation(User.find(params[:start]), @user, response.body[:id], request.base_url).deliver_now
         flash[:notice] = "Logged in as #{@user.username}. Your account has been activated. Check your email for game invite from #{player_1.first_name}"
         redirect_to "/dashboard/#{@user.id}"
