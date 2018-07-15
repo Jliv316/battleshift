@@ -11,8 +11,8 @@ describe 'Registered user', type: :request do
     @board2 = Board.all.last
   end
   context 'after starting a game with another registered user' do
-    context 'ships have been placed' do
-      it 'allows player 1 to take a shot' do
+    context 'ships have been placed and player 1 takes a shot and hits player 2s ship' do
+      it 'updates the message and board with a hit' do
 
         @ship1 = create(:ship)
         @ship2 = create(:ship)
@@ -34,14 +34,14 @@ describe 'Registered user', type: :request do
         SpaceService.occupy!(@board2.spaces[6], @ship4)
 
         #player 2 takes a shot and hits
-        payload = {:shot => {target: "A1"}}
+        payload = {target: "A1"}
         endpoint = "/api/v1/games/#{@game.id}/shots" 
 
         post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
 
         game_data = JSON.parse(response.body)
 
-        expect(game_data["message"]).to eq("Your shot resulted in a Hit")
+        expect(game_data["message"]).to eq("Your shot resulted in a Hit.")
       end
     end
   end
