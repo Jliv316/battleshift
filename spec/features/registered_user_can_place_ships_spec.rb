@@ -104,7 +104,7 @@ describe 'Registered user', type: :request do
 
       game_data = JSON.parse(response.body, symbolize_names: true)
 
-      expect(game_data[:message]).to include("Invalid move. It's your opponent's turn")
+      expect(game_data[:message]).to include("Your shot resulted in a Miss.")
 
     end
   end
