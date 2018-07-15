@@ -18,17 +18,18 @@ describe 'Registered user', type: :request do
         @ship2 = create(:ship, length: 3)
         @ship3 = create(:ship)
         @ship4 = create(:ship, length: 3)
+
         #player 1 places ships
         SpaceService.occupy!(@board1.spaces[0], @ship1)
         SpaceService.occupy!(@board1.spaces[1], @ship1)
-        binding.pry
+
         SpaceService.occupy!(@board1.spaces[4], @ship2)
         SpaceService.occupy!(@board1.spaces[5], @ship2)
         SpaceService.occupy!(@board1.spaces[6], @ship2)
         #player2 places ships
         SpaceService.occupy!(@board2.spaces[1], @ship3)
         SpaceService.occupy!(@board2.spaces[0], @ship3)
-        binding.pry
+
         SpaceService.occupy!(@board2.spaces[4], @ship4)
         SpaceService.occupy!(@board2.spaces[5], @ship4)
         SpaceService.occupy!(@board2.spaces[6], @ship4)
@@ -42,7 +43,7 @@ describe 'Registered user', type: :request do
         game_data = JSON.parse(response.body)
         binding.pry
         expect(game_data["message"]).to eq("Your shot resulted in a Hit.")
-        expect(@board1.ships.first.damage).to eq(1)
+        expect(@board1.ships.find(1).damage).to eq(1)
       end
     end
   end
