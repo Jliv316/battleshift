@@ -18,7 +18,6 @@ describe 'Registered user', type: :request do
 
       post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user1.api_key}
 
-
       data = JSON.parse(response.body)
 
       expect(data["message"]).to eq("Successfully placed ship with a size of 2. You have 1 ship(s) to place with a size of 3.")
@@ -60,23 +59,28 @@ describe 'Registered user', type: :request do
     end
 
     it 'opponent can now place ships' do 
-      payload = { ship_size: 3, start_space: "A1", end_space: "A3" }
+      payload = { ship_size: 3, start_space: "D1", end_space: "D3" }
       endpoint = "/api/v1/games/#{@game.id}/ships"
 
       post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
 
       data = JSON.parse(response.body, symbolize_names: true)
-      expect(data["message"]).to eq("Successfully placed ship with a size of 3. You have 1 ship(s) to place.")
-      expect(@board1.spaces.find_by(name: "A1").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A3").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A1").ship_id).to_not eq(6)
-      expect(@board1.spaces.find_by(name: "A2").ship_id).to_not eq(6)
-      expect(@board1.spaces.find_by(name: "A3").ship_id).to_not eq(6)
+
+      expect(data[:message]).to eq("Successfully placed ship with a size of 3. You have 1 ship(s) to place with a size of 2.")
+      expect(@board2.spaces.find_by(name: "D1").ship_id).to eq(Ship.last.id)
+      expect(@board2.spaces.find_by(name: "D2").ship_id).to eq(Ship.last.id)
+      expect(@board2.spaces.find_by(name: "D3").ship_id).to eq(Ship.last.id)
+      expect(@board2.spaces.find_by(name: "D1").ship_id).to_not eq(6)
+      expect(@board2.spaces.find_by(name: "D2").ship_id).to_not eq(6)
+      expect(@board2.spaces.find_by(name: "D3").ship_id).to_not eq(6)
     end
 
     it 'opponent can place remaining ship' do 
-      payload = { ship_size: 2, start_space: "B1", end_space: "B2" }
+      ship = Ship.create!(id: 1115)
+      @board2.spaces.first.update(ship_id: ship.id)
+      @board2.spaces.last.update(ship_id: ship.id)
+      @board2.spaces[1].update(ship_id: ship.id)
+      payload = { ship_size: 2, start_space: "B2", end_space: "B3" }
       endpoint = "/api/v1/games/#{@game.id}/ships"
 
       post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
@@ -84,12 +88,10 @@ describe 'Registered user', type: :request do
       data = JSON.parse(response.body)
 
       expect(data["message"]).to eq("Successfully placed ship with a size of 2. You have 0 ship(s) to place.")
-      expect(@board1.spaces.find_by(name: "A1").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A2").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A3").ship_id).to eq(Ship.last.id)
-      expect(@board1.spaces.find_by(name: "A1").ship_id).to_not eq(6)
-      expect(@board1.spaces.find_by(name: "A2").ship_id).to_not eq(6)
-      expect(@board1.spaces.find_by(name: "A3").ship_id).to_not eq(6)
+      expect(@board2.spaces.find_by(name: "B2").ship_id).to eq(Ship.first.id)
+      expect(@board2.spaces.find_by(name: "B3").ship_id).to eq(Ship.first.id)
+      expect(@board2.spaces.find_by(name: "B2").ship_id).to_not eq(6)
+      expect(@board2.spaces.find_by(name: "B3").ship_id).to_not eq(6)
     end
   end
 end

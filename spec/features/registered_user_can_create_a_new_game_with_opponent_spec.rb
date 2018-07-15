@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 describe 'Registered User', type: :request do
-  let(:user1) { create(:user) }
+  let(:user1) { create(:user, api_key: User.generate_api_key) }
   let(:user2) { create(:user) }
   let(:user3) { create(:user, activated: false, api_key: User.generate_api_key) }
   
   context 'player 1 is logged in and activated' do
     it 'player 1 can create a new game by sending a post request with an API key and another players username' do
-      post "/api/v1/games", params: { game: { api_key: user1.api_key, player_2_username: user2.username } }
+      post "/api/v1/games", params: { opponent_email: user2.username }, headers: {"HTTP_X_API_KEY" => user1.api_key}
 
       expect(response.code).to eq("200")
       expect(Game.last.player_1_id).to eq(user1) 
@@ -17,7 +17,7 @@ describe 'Registered User', type: :request do
     end
 
     it 'player 1 will receive a message if player 2 is not registered in the system' do
-      post "/api/v1/games", params: { game: { api_key: user1.api_key, player_2_username: "example@example.com" } }
+      post "/api/v1/games", params: { opponent_email: "example@example.com" }, headers: {"HTTP_X_API_KEY" => user1.api_key}
 
       json = JSON.parse(response.body)
       expect(response.code).to eq("400")
@@ -27,7 +27,7 @@ describe 'Registered User', type: :request do
 
   context 'player 1 is logged in but not activated' do
     it 'player 1 attempts to create a game and recieves a message to activate account' do
-      post "/api/v1/games", params: { game: { player_2_username: user1.username } }, headers: {"HTTP_X_API_KEY" => user3.api_key}
+      post "/api/v1/games", params: { opponent_email: user1.username }, headers: {"HTTP_X_API_KEY" => user3.api_key}
 
       json = JSON.parse(response.body)
       expect(response.code).to eq("400")
