@@ -40,9 +40,9 @@ describe 'Registered user', type: :request do
         post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user2.api_key}
 
         game_data = JSON.parse(response.body)
-        binding.pry
+
         expect(game_data["message"]).to eq("Your shot resulted in a Hit.")
-        expect(@board1.spaces.first.result).to eq("Hit")
+        expect(@board1.ships.first.damage).to eq(1)
       end
     end
   end
