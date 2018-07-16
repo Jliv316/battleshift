@@ -31,6 +31,7 @@ group :development, :test do
   gem 'launchy'
   gem 'shoulda-matchers'
   gem 'simplecov'
+  gem 'simplecov-rcov'
 end
 
 group :development do

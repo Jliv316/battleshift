@@ -94,4 +94,18 @@ describe 'Registered user', type: :request do
       expect(@board2.spaces.find_by(name: "B3").ship_id).to_not eq(6)
     end
   end
+
+  context 'players have deployed ships' do
+    it 'player 1 takes shot and recieves an error message telling player 1 it is not his/her turn' do
+      payload = {target: "A1"}
+      endpoint = "/api/v1/games/#{@game.id}/shots"
+
+      post endpoint, params: payload, headers: {"HTTP_X_API_KEY" => @user1.api_key}
+
+      game_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(game_data[:message]).to include("Your shot resulted in a Miss.")
+
+    end
+  end
 end

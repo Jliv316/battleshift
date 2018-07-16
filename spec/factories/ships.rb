@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :ship do
-    damage nil
+    damage 0
     length 2
   end
 end

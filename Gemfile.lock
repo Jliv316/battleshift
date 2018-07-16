@@ -184,6 +184,8 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
+    simplecov-rcov (0.2.3)
+      simplecov (>= 0.4.1)
     slim (3.0.9)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 1.3.3, < 2.1)
@@ -239,6 +241,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   shoulda-matchers
   simplecov
+  simplecov-rcov
   slim
   tzinfo-data
   uglifier (>= 1.3.0)
