@@ -13,6 +13,9 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+require 'simplecov'
+SimpleCov.start
+SimpleCov.start "rails"
 require 'byebug'
 require 'capybara/rspec'
 
