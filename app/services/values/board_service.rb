@@ -38,28 +38,28 @@ class BoardService
     Space.where(board_id: @board.id).find_by(name: coordinates)
   end
 
-  def space_occupied?(coordinate)
-    !Space.find_by(name: coordinate).where(board_id: @board.id).ship_id.nil?
-  end
+  # def space_occupied?(coordinate)
+  #   !Space.find_by(name: coordinate).where(board_id: @board.id).ship_id.nil?
+  # end
 
-  def space_attacked?(coordinate)
-    Space.find_by(name: coordinate).where(board_id: @board.id).result == "Hit" || Space.find_by(name: coordinate).where(board_id: @board.id).result == "Miss"
-  end
+  # def space_attacked?(coordinate)
+  #   Space.find_by(name: coordinate).where(board_id: @board.id).result == "Hit" || Space.find_by(name: coordinate).where(board_id: @board.id).result == "Miss"
+  # end
 
-  def contains_hit?(coordinate)
-    Space.find_by(name: coordinate).where(board_id: @board.id).result == "Hit"
-  end
+  # def contains_hit?(coordinate)
+  #   Space.find_by(name: coordinate).where(board_id: @board.id).result == "Hit"
+  # end
 
-  def contains_miss?(coordinate)
-    Space.find_by(name: coordinate).where(board_id: @board.id).result == "Miss"
-  end
+  # def contains_miss?(coordinate)
+  #   Space.find_by(name: coordinate).where(board_id: @board.id).result == "Miss"
+  # end
 
-  def first_column?(coordinate)
-    get_column(coordinate) == "1"
-  end
+  # def first_column?(coordinate)
+  #   get_column(coordinate) == "1"
+  # end
 
-  def set_spaces_occupied(coordinate1, coordinate2)
-    same_row?(coordinate1, coordinate2) ? set_row_spaces_occupied(coordinate1, coordinate2) : set_column_spaces_occupied(coordinate1, coordinate2)
-  end
+  # def set_spaces_occupied(coordinate1, coordinate2)
+  #   same_row?(coordinate1, coordinate2) ? set_row_spaces_occupied(coordinate1, coordinate2) : set_column_spaces_occupied(coordinate1, coordinate2)
+  # end
 end
 
