@@ -5,7 +5,6 @@ module Api
         def create
           shooter = User.find_by(api_key: request.headers["HTTP_X_API_KEY"])
           game = Game.find(params[:game_id])
-
           if shooter.nil?
             render json: { message: "Unauthorized"}, status: 401
           elsif (game.current_turn == "Player 1" && game.player_1_id.id == shooter.id) || (game.current_turn == "Player 2" && game.player_2_id.id == shooter.id) && game.winner.nil? || game.current_turn == ""
@@ -14,13 +13,9 @@ module Api
             if turn_processor.message == "Invalid coordinates."
               render json: game, message: turn_processor.message, status: 400 
             else
-              if game.boards.where(user_id: shooter.id).first.spaces.pluck(:result).count("Hit") == 5
-                game.update(winner: User.find(game.boards.where.not(user_id: shooter.id).first.user_id).username)
+              if turn_processor.check_win_conditions
                 render json: game, message: (turn_processor.message + " Game over.")
-              elsif game.boards.where.not(user_id: shooter.id).first.spaces.pluck(:result).count("Hit") == 5
-                game.update(winner: shooter.username)
-                render json: game, message: (turn_processor.message + " Game over.")
-              else
+              else 
                 render json: game, message: turn_processor.message
               end
             end

@@ -19,6 +19,14 @@ class TurnProcessorService
     @messages.join(" ")
   end
 
+  def check_win_conditions
+    if @game.boards.where(user_id: @shooter.id).first.spaces.pluck(:result).count("Hit") == 5
+      @game.update(winner: User.find(@game.boards.where.not(user_id: @shooter.id).first.user_id).username)
+    elsif @game.boards.where.not(user_id: @shooter.id).first.spaces.pluck(:result).count("Hit") == 5
+      @game.update(winner: @shooter.username)
+    end
+  end
+
   private
 
   attr_reader :game, :target, :opponent_board, :shooter
@@ -35,13 +43,6 @@ class TurnProcessorService
     end
   end
 
-  def check_win_conditions
-    if game.boards.where(user_id: shooter.id).first.spaces.pluck(:result).count("Hit") == 5
-      game.update(winner: User.find(game.boards.where.not(user_id: @shooter.id).first.user_id).username)
-    elsif game.boards.where.not(user_id: shooter.id).first.spaces.pluck(:result).count("Hit") == 5
-      game.update(winner: @shooter.username)
-    end
-  end
 
   def invalid_move_or_turn?
     

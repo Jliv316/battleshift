@@ -28,7 +28,7 @@ Rails.application.routes.draw do
 
   # Game play resources
   post '/api/v1/games', to: 'games#create'
-    
+
   # Notification resources
   post '/welcome', to: 'notification#create'
 end
