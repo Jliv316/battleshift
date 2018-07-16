@@ -13,10 +13,6 @@ class User < ApplicationRecord
     [*('a'..'z'),*('0'..'9')].shuffle[0,20].join
   end
 
-  # def send_email(user, url)
-  #   BattleshipNotifierMailer.welcome(user, url).deliver_now
-  # end
-
   def already_playing?(user)
     games.where('player_2_api_key = ?', user.api_key)
   end
