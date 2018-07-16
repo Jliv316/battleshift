@@ -30,6 +30,8 @@ describe BoardService do
   end
 
   it 'determines if a space is occupied' do
-    
+    board = BoardService.create_board(user1, game, 4)
+    space_not_occupied = BoardService.space_occupied?("A1")
+    expect(space_not_occupied).to eq(false)
   end
 end
