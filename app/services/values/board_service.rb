@@ -28,7 +28,7 @@ class BoardService
     end
   end
 
-  # End methods to create board and spaces.
+
 
   def initialize(board)
     @board = board
