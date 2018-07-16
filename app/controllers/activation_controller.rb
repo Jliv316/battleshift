@@ -1,7 +1,7 @@
 class ActivationController < ApplicationController
   def show
     @user = User.find_by(username: params[:username])
-    if session[:id] == @user.id && @user.api_key == params[:api_key]
+    if @user != nil && session[:id] == @user.id && @user.api_key == params[:api_key]
       update_hash = {activated: true}
       @user.update(update_hash)
       flash[:notice] = "Thank you! Your account is now activated."

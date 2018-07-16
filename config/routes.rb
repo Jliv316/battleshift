@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   # Session resources
   get '/login', to: 'sessions#new'
   post '/login', to: 'sessions#create'
+  delete '/logout', to: 'sessions#destroy'
 
   # Activation resources
   get '/activate/user', to: 'activation#show'

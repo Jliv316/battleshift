@@ -2,48 +2,16 @@ require 'rails_helper'
 
 describe 'GET /api/v1/games/1' do
   context 'with an existing game' do
-    xit 'returns a game with boards' do
-      player_1_board = Board.new(4)
-      player_2_board = Board.new(4)
-      sm_ship = Ship.new(2)
-      md_ship = Ship.new(3)
+    it 'returns a game with boards' do
+      @user1 = create(:user) 
+      @user2 = create(:user, api_key: User.generate_api_key)
+      @game = create(:game, player_1_id: @user1, player_2_id: @user2, player_1_api_key: @user1.api_key, player_2_api_key: @user2.api_key)
+      @board1 = create(:board, user: @user1, game: @game) 
+      @board2 = create(:board, user: @user2, game: @game) 
+      create_spaces(@board1)
+      create_spaces(@board2)
 
-      ShipPlacer.new(board: player_1_board,
-                     ship: sm_ship,
-                     start_space: "A1",
-                     end_space: "A2"
-                    ).run
-
-      ShipPlacer.new(board: player_1_board,
-                     ship: md_ship,
-                     start_space: "B1",
-                     end_space: "D1"
-                    ).run
-
-      ShipPlacer.new(board: player_2_board,
-                     ship: sm_ship.dup,
-                     start_space: "A1",
-                     end_space: "A2"
-                    ).run
-
-      ShipPlacer.new(board: player_2_board,
-                     ship: md_ship.dup,
-                     start_space: "B1",
-                     end_space: "D1"
-                    ).run
-
-      game_attributes = {
-                      player_1_board: player_1_board,
-                      player_2_board: player_2_board,
-                      player_1_turns: 0,
-                      player_2_turns: 0,
-                      current_turn: "challenger"
-                    }
-
-      game = Game.new(game_attributes)
-      game.save!
-
-      get "/api/v1/games/#{game.id}"
+      get "/api/v1/games/#{@game.id}"
 
       actual  = JSON.parse(response.body, symbolize_names: true)
       expected = Game.last
@@ -56,7 +24,7 @@ describe 'GET /api/v1/games/1' do
       expect(actual[:player_1_board][:rows][0][:name]).to eq("row_a")
       expect(actual[:player_1_board][:rows][3][:data][0][:coordinates]).to eq("D1")
       expect(actual[:player_1_board][:rows][3][:data][0][:coordinates]).to eq("D1")
-      expect(actual[:player_1_board][:rows][3][:data][0][:status]).to eq("Not Attacked")
+      expect(actual[:player_1_board][:rows][3][:data][0][:status]).to eq("")
     end
   end
 
