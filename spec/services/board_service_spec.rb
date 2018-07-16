@@ -13,6 +13,12 @@ describe BoardService do
   it 'gets row letters' do
     board = BoardService.create_board(user1, game, 4)
     row_letters = BoardService.get_row_letters
-    expect(row_letters).to eq()
+    expect(row_letters).to eq(["A", "B", "C", "D"])
+  end
+
+  it 'gets column numbers' do
+    board = BoardService.create_board(user1, game, 4)
+    column_numbers = BoardService.get_column_numbers
+    expect(row_letters).to eq(["A", "B", "C", "D"])
   end
 end
