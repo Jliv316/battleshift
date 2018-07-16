@@ -1,28 +1,32 @@
-h1 Users
-table
-  thead
-    tr
-      th colspan="3"
-      th First Name
-      th Last Name
-      th Username
-
-  tbody
-    - @users.each do |user|
+- if !current_user.nil?
+  h1 Users
+  table
+    thead
       tr
-        td
-          = user.first_name
-        td
-          = user.last_name
-        td
-          = user.username
-        td
-          = link_to 'Show', user
-        td
-          = link_to 'Edit', edit_user_path(user)
-        td
-          = link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' }
+        th colspan="3"
+        th First Name
+        th Last Name
+        th Username
 
-br
+    tbody
+      - @users.each do |user|
+        tr
+          td
+            = user.first_name
+          td
+            = user.last_name
+          td
+            = user.username
+          td
+            = link_to 'Show', user
+          td
+            = link_to 'Edit', edit_user_path(user)
+          td
+            = link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' }
 
-= link_to 'New User', register_path
+  br
+
+  = link_to 'New User', register_path
+- else
+  = render file: '/public/404.html', status: 404
+

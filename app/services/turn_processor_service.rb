@@ -43,9 +43,7 @@ class TurnProcessorService
     end
   end
 
-
   def invalid_move_or_turn?
-    
+
   end
-    
 end
