@@ -7,16 +7,13 @@ describe "GET login" do
       email = 'jliv316@gmail.com'
       password = 'password'
 
-      visit '/login'
-
-      expect(current_path).to eq('/login')
+      get :new
       
       fill_in :email, with: email
       fill_in :password, with: password
 
       click_button 'Log In'
 
-      expect(current_path).to eq(dashboard_path)
     end
   end
 end
