@@ -10,8 +10,6 @@ class TurnProcessorService
   def run!
     begin
       attack_opponent
-      # ai_attack_back
-      # game.save!
     rescue InvalidAttack => e
       @messages << e.message
     end
@@ -37,17 +35,16 @@ class TurnProcessorService
     end
   end
 
-  # def ai_attack_back
-  #   result = AiSpaceSelector.new(player.board).fire!
-  #   @messages << "The computer's shot resulted in a #{result}."
-  #   game.player_2_turns += 1
-  # end
+  def check_win_conditions
+    if game.boards.where(user_id: shooter.id).first.spaces.pluck(:result).count("Hit") == 5
+      game.update(winner: User.find(game.boards.where.not(user_id: @shooter.id).first.user_id).username)
+    elsif game.boards.where.not(user_id: shooter.id).first.spaces.pluck(:result).count("Hit") == 5
+      game.update(winner: @shooter.username)
+    end
+  end
 
-  # def player
-  #   Player.new(game.player_1_board)
-  # end
-
-  # def opponent
-  #   Player.new(game.player_2_board)
-  # end
+  def invalid_move_or_turn?
+    
+  end
+    
 end

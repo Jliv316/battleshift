@@ -14,12 +14,7 @@ class Shooter
   end
 
   private
-    attr_reader :target
-
-    # def space
-    #   @space ||= board.spaces.find_by(name: target)
-    # end
-
+  attr_reader :target
   def valid_shot?
     BoardService.space_names.include?(target)
   end
