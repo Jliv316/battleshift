@@ -28,10 +28,4 @@ describe BoardService do
     space_names = BoardService.space_names
     expect(space_names).to eq(["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"])
   end
-
-  it 'determines if a space is occupied' do
-    board = BoardService.create_board(user1, game, 4)
-    space_not_occupied = BoardService.space_occupied?("A1")
-    expect(space_not_occupied).to eq(false)
-  end
 end
