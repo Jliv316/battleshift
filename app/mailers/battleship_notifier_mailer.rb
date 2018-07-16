@@ -23,6 +23,6 @@ class BattleshipNotifierMailer < ApplicationMailer
     @p1 = player_1
     @p2 = player_2
     @game_id = game_id
-    mail(to: p2.username, subject: "You have been invited by #{p1.first_name} to play a game of Battleship.")
+    mail(to: @p2.username, subject: "You have been invited by #{@p1.first_name} to play a game of Battleship.")
   end
 end

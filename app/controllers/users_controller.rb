@@ -17,6 +17,10 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
+    if params[:from] == "invitation" && params[:start]
+      session[:from] = params[:from]
+      session[:start] = params[:start]
+    end
     @user = User.new
   end
 
@@ -26,7 +30,7 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    if params[:from] == "invitation" && params[:start]
+    if !session[:from].nil? && !session[:start].nil?
       create_and_activate(user_params)
     else
       regular_create(user_params)
@@ -58,11 +62,13 @@ class UsersController < ApplicationController
       params = user_params.merge(api_key: User.generate_api_key)
       @user = User.new(params)
       @user.activated = true
-      player_1 = User.find(params[:start])
+      player_1 = User.find(session[:start])
+      session[:start] = nil
+      session[:from] = nil
       if @user.save
         login(@user)
-        response = Faraday.post('/api/v1/games', params: { opponent_email: @user.username }, headers: {"HTTP_X_API_KEY" => player_1.api_key})
-        BattleshipNotifierMailer.special_invitation(User.find(params[:start]), @user, response.body[:id], request.base_url).deliver_now
+        response = Faraday.post("#{request.base_url}/api/v1/games", params: { opponent_email: @user.username }, headers: {"HTTP_X_API_KEY" => player_1.api_key})
+        BattleshipNotifierMailer.special_invitation(player_1, @user, JSON.parse(response.body)["id"], request.base_url).deliver_now
         flash[:notice] = "Logged in as #{@user.username}. Your account has been activated. Check your email for game invite from #{player_1.first_name}"
         redirect_to "/dashboard/#{@user.id}"
       else

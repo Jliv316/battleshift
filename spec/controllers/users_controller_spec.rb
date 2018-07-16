@@ -29,9 +29,19 @@ RSpec.describe UsersController, type: :controller do
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) { {
+    first_name:   'Sally',
+    last_name:    'Smith',
+    username:     'yeah22@gmail.com',
+    password:     'password',
+    api_key:      "#{User.generate_api_key}",
+    activated:    false
+    }
+  }
+
+  let(:alternative_attributes) { {
     first_name:   'Bob',
     last_name:    'Smith',
-    username:     'yeah@gmail.com',
+    username:     'yeah11@gmail.com',
     password:     'password',
     api_key:      "#{User.generate_api_key}",
     activated:    false
@@ -62,6 +72,17 @@ RSpec.describe UsersController, type: :controller do
       get :show, params: {id: user.to_param}, session: valid_session
       expect(response).to be_success
     end
+
+    it "activates a user who was not activated before if they come from an activation email" do
+      user = User.create! valid_attributes
+      request.session[:activate] = true
+
+      get :show, params: {id: user.to_param}, session: valid_session
+
+      expect(response).to be_success
+      expect(User.find(user.id).activated).to be true
+      expect(controller).to set_flash.now[:notice].to(/User was activated/)
+    end
   end
 
   describe "GET #new" do
@@ -89,6 +110,30 @@ RSpec.describe UsersController, type: :controller do
 
       it "redirects to the created user" do
         post :create, params: {user: valid_attributes}, session: valid_session
+        expect(response).to redirect_to("/dashboard/#{User.last.id}")
+      end
+
+      it 'creates and activates a user who comes from an invitation email' do
+        user = User.create! valid_attributes
+
+        stub_request(:post, "http://test.host/api/v1/games").
+        with(
+          body: {"headers"=>{"HTTP_X_API_KEY"=>"#{user.api_key}"}, "params"=>{"opponent_email"=>"yeah11@gmail.com"}},
+          headers: {
+         'Accept'=>'*/*',
+         'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+         'Content-Type'=>'application/x-www-form-urlencoded',
+         'User-Agent'=>'Faraday v0.15.2'
+          }).
+        to_return(status: 200, body: {id: 1}.to_json, headers: {})
+
+        request.session[:from] = "invitation"
+        request.session[:start] = user.id
+
+        post :create, params: {user: alternative_attributes }, session: valid_session
+
+        expect(response.status).to eq(302)
+        expect(controller).to set_flash[:notice].to(/Logged in as/)
         expect(response).to redirect_to("/dashboard/#{User.last.id}")
       end
     end
