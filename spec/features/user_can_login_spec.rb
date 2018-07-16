@@ -12,7 +12,7 @@ describe "GET login" do
       fill_in :session_password, with: password
 
       click_button 'Log In'
-      expect(current_path).to eq("/dashboard/1")
+      expect(current_path).to eq("/dashboard/#{user.id}")
   end
 end
 
